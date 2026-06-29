@@ -1,0 +1,17 @@
+posts: list[dict] = [
+    {
+        "id": 1,
+        "author": "Saif Rasheed",
+        "title": "Why I'm Learning Backend Alongside AI",
+        "content": "Prompt engineering taught me what AI can do — now I want to understand how the systems around it actually work.",
+        "date_posted": "June 29, 2026",
+    },
+    {
+        "id": 2,
+        "author": "Saif Rasheed",
+        "title": "FastAPI First Impressions",
+        "content": "Auto-generated docs at /docs felt like magic — now I want to know what's happening underneath.",
+        "date_posted": "June 29, 2026",
+    },
+]
+
