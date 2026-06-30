@@ -58,6 +58,21 @@ body {
     border-color: var(--accent-pink);
 }
 
+/* ===== Theme Dropdown ===== */
+.dropdown-menu {
+    background-color: var(--bg-card);
+    border-color: var(--border-color);
+}
+
+.dropdown-item {
+    color: var(--text-white);
+}
+
+.dropdown-item:hover {
+    background-color: var(--accent-red);
+    color: #fff;
+}
+
 /* ===== Content / Post Cards ===== */
 .content-section {
     background-color: var(--bg-card);

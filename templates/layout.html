@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- Site Info -->
     {% if title %}
       <title>FastAPI Blog - {{ title }}</title>
     {% else %}
@@ -12,29 +13,75 @@
     <meta name="description" content="A backend learning project by Saif Rasheed">
     <meta name="author" content="Saif Rasheed">
 
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="FastAPI Blog">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <meta property="og:image:alt" content="">
+
+    <!-- Preconnect for Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap"
+          rel="stylesheet">
 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='css/main.css') }}">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet"
+          type="text/css"
+          href="{{ url_for('static', path='css/main.css') }}">
+
+    <meta name="theme-color" content="#ff2d55">
+
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', path='icons/favicon.ico') }}" sizes="any">
+    <link rel="icon" href="{{ url_for('static', path='icons/icon.svg') }}" type="image/svg+xml">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', path='icons/icon.png') }}">
+    <link rel="manifest" href="{{ url_for('static', path='site.webmanifest') }}">
   </head>
   <body class="d-flex flex-column min-vh-100">
     <header class="site-header">
       <nav class="navbar navbar-expand-md bg-steel fixed-top" data-bs-theme="dark">
         <div class="container">
           <a class="navbar-brand me-4" href="{{ url_for('home') }}">Saif's Blog</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle">
+          <button class="navbar-toggler"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#navbarToggle"
+                  aria-controls="navbarToggle"
+                  aria-expanded="false"
+                  aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav me-auto">
-              <a class="nav-link active" href="{{ url_for('home') }}">Home</a>
+              <a class="nav-link active" aria-current="page" href="{{ url_for('home') }}">Home</a>
             </div>
+            <!-- Navbar Right Side -->
             <div class="navbar-nav">
               <a class="btn btn-outline-light mb-2 mb-md-0 me-md-2" href="#">Login</a>
               <a class="btn btn-light mb-2 mb-md-0 me-md-3" href="#">Register</a>
+              <div class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle"
+                   href="#"
+                   role="button"
+                   id="bd-theme"
+                   data-bs-toggle="dropdown"
+                   aria-expanded="false">
+                  <span id="bd-theme-text">🌗 Auto</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bd-theme">
+                  <li><button class="dropdown-item" type="button" data-bs-theme-value="light">🌝 Light</button></li>
+                  <li><button class="dropdown-item" type="button" data-bs-theme-value="dark">🌚 Dark</button></li>
+                  <li><button class="dropdown-item" type="button" data-bs-theme-value="auto">🌗 Auto</button></li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -49,8 +96,14 @@
         </div>
         <aside class="col-md-4">
           <div class="content-section py-3 px-4 mb-4">
-            <h3>About</h3>
-            <p class="text-body-secondary">A backend learning journal — FastAPI, databases, auth, and eventually AI-powered features.</p>
+            <h3>Our Sidebar</h3>
+            <p class="text-body-secondary">You can put any information here you'd like.</p>
+            <ul class="list-group">
+              <li class="list-group-item">Latest Posts</li>
+              <li class="list-group-item">Announcements</li>
+              <li class="list-group-item">Calendars</li>
+              <li class="list-group-item">etc</li>
+            </ul>
           </div>
         </aside>
       </div>
@@ -63,6 +116,29 @@
     </footer>
 
     <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Dark Mode Toggle -->
+    <script>
+      const setTheme = (theme) => {
+        if (theme === 'auto') {
+          document.documentElement.setAttribute('data-bs-theme',
+            window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        } else {
+          document.documentElement.setAttribute('data-bs-theme', theme);
+        }
+        localStorage.setItem('theme', theme);
+
+        const themeText = { light: '🌝 Light', dark: '🌚 Dark', auto: '🌗 Auto' };
+        document.getElementById('bd-theme-text').textContent = themeText[theme];
+      };
+
+      document.querySelectorAll('[data-bs-theme-value]').forEach(button => {
+        button.addEventListener('click', () => setTheme(button.getAttribute('data-bs-theme-value')));
+      });
+
+      setTheme(localStorage.getItem('theme') || 'auto');
+    </script>
   </body>
 </html>
