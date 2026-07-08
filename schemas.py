@@ -7,7 +7,10 @@ class UserBase(BaseModel):
     Email : EmailStr = Field(max_length = 120)
 
 class UserCreate(UserBase):
-    pass
+    model_config = ConfigDict(from_attributes = True)
+    id : int
+    image_file : str | None
+    image_path : str
 
 class UserResponse(UserBase):
     pass
@@ -16,10 +19,10 @@ class UserResponse(UserBase):
 class PostBase(BaseModel):
     title : str = Field(min_length=1, max_length = 100)
     content : str = Field(min_length=1)
-    author : str = Field(min_length=1,max_length =50)
+    
 
 class PostCreate(PostBase):
-    pass
+    user_id : int #Temp
 
 class PostResponse(PostBase):
     model_config = ConfigDict(from_attributes = True)
@@ -27,6 +30,8 @@ class PostResponse(PostBase):
 
 
     id : int
-    date_posted : str
+    user_id : int 
+    date_posted : datetime
+    author : UserResponse
 
     

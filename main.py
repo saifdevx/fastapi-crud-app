@@ -1,18 +1,27 @@
-from fastapi import FastAPI, Request, HTTPException, status
+from fastapi import FastAPI, Request, HTTPException, status , Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from schemas import PostCreate , PostResponse
+from schemas import PostCreate , PostResponse , UserCreate , UserResponse
 
+from typing import Annotated
+from sqlalchemy import select
+from sqlalchemy.orm import session
 
+import models
+from database import Base , engine , get_db
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+app.mount("/media" , StaticFiles(directory = "media") , name = "media")
 
 @app.exception_handler(HTTPException)
 @app.exception_handler(StarletteHTTPException)
@@ -60,22 +69,7 @@ def validation_exception_handler(request: Request, exception: RequestValidationE
     )
 
 
-posts: list[dict] = [
-    {
-        "id": 1,
-        "author": "Saif Rasheed",
-        "title": "Why I'm Learning Backend Alongside AI",
-        "content": "Prompt engineering taught me what AI can do — now I want to understand how the systems around it actually work.",
-        "date_posted": "June 29, 2026",
-    },
-    {
-        "id": 2,
-        "author": "Saif Rasheed",
-        "title": "FastAPI First Impressions",
-        "content": "Auto-generated docs at /docs felt like magic — now I want to know what's happening underneath.",
-        "date_posted": "June 29, 2026",
-    },
-]
+
 
 
 @app.get("/", include_in_schema=False, name="home")
@@ -97,7 +91,23 @@ def get_post_page(request : Request , post_id : int):
     )
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="post not found")
 
+@app.post(
+    "/api/users",
+    response_model=UserResponse,
+    status_code=status.HTTP_201_CREATED,
+)
 
+def create_user(user: UserCreate , db : Annotated[ session,Depends , (get_db) ]):
+    resut = db.execute(
+        select(models.User).where(models.User.username == user.username), 
+        )
+    existing_user = resut.scalers().first()
+
+    if existing_user:
+        raise HTTPException(
+            status_code= status.HTTP_400_BAD_REQUEST,
+            detail= "UserName Already Exits",
+        ) 
 
 
 @app.get("/api/posts", response_model=list[PostResponse])
