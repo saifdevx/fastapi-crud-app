@@ -5,11 +5,11 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from schemas import PostCreate , PostResponse , UserCreate , UserResponse
+from schemas import PostCreate , PostResponse , UserCreate , UserResponse 
 
 from typing import Annotated
 from sqlalchemy import select
-from sqlalchemy.orm import session
+from sqlalchemy.orm import Session
 
 import models
 from database import Base , engine , get_db
@@ -97,17 +97,40 @@ def get_post_page(request : Request , post_id : int):
     status_code=status.HTTP_201_CREATED,
 )
 
-def create_user(user: UserCreate , db : Annotated[ session,Depends , (get_db) ]):
+def create_user(user: UserCreate , db : Annotated[ Session,Depends(get_db) ]):
     resut = db.execute(
         select(models.User).where(models.User.username == user.username), 
         )
-    existing_user = resut.scalers().first()
+    existing_user = resut.scalars().first()
 
     if existing_user:
         raise HTTPException(
             status_code= status.HTTP_400_BAD_REQUEST,
             detail= "UserName Already Exits",
         ) 
+
+    resut = db.execute(
+        select(models.User).where(models.User.email == user.email), 
+        )
+    existing_email = resut.scalars().first()
+
+    if existing_email:
+        raise HTTPException(
+            status_code= status.HTTP_400_BAD_REQUEST,
+            detail= "Email Already Exits",
+        ) 
+
+    new_user  = models.User(
+        username = user.username,
+        email = user.email
+    )
+
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return new_user
+ 
 
 
 @app.get("/api/posts", response_model=list[PostResponse])
